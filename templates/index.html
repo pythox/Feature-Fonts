@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Feature-Fonts</title>
+	<meta name=”viewport” content=”width=device-width, initial-scale=1″>
+	<link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
+	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+</head>
+
+<body>
+	<div id="particles-js">
+		<div id="heading-top">
+			<h1 style="color:black;">Feature-Fonts</h1>
+			<br>
+			<h1>A Font identification tool using CNN</h1>
+			<br>
+			<a href="https://github.com/meet-dadhania/Feature-Fonts" target="_blank">Github</a>
+		</div>
+		<form method="POST" action="/upload" enctype="multipart/form-data">
+			<div class="input-group mb-3" style="position: absolute;top: 40%;width: 40%;margin-left: 30%;margin-right: 30%;">
+				<div class="input-group-prepend">
+					<input type="submit" name="submit" value="Upload">
+				</div>
+				<div class="custom-file">
+					<input type="file" name="input" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+					<label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+				</div>
+			</div>
+		</form>
+		
+		<div style="color: black;position: absolute;top: 60%;left: 50%;text-align: right;font-family: 'Josefin Sans', sans-serif;font-size: 1.3em;border-color: black;border-width: 2px;">
+			{% if variable != "-1" %}
+				<h2> {{ variable }} </h2>
+			{% endif %}
+		</div>
+
+		<div id="heading-bot">
+			- Meet Dadhania (16BCE103)
+		</div>
+	</div>
+	
+	<script src="{{ url_for('static', filename='js/lib/particles.min.js') }}"></script>
+	<script>
+	particlesJS.load('particles-js', "{{ url_for('static', filename='json/particles.json') }} ", function() {
+    	console.log('callback - particles.js config loaded');
+ 	});
+	</script>
+</body>
+
+</html>

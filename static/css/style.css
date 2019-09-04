@@ -1,0 +1,26 @@
+html { overflow-y: hidden; }
+
+#particles-js canvas{
+    background-color: white;
+    height: 100vh;
+}
+
+#heading-top{
+    color: black;
+    position: absolute;
+    text-align: center;
+    top: 7%;
+    width: 100%;
+    line-height: 0.4em;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+#heading-bot{
+    color: black;
+	position: absolute;
+	bottom: 2%;
+	right: 2%;
+    text-align: right;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 1.3em;
+}
