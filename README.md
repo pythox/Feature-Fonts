@@ -1,2 +1,2 @@
-# Feature-Fonts
-Deep learning Solution to identify fonts in images
+<b> To Install Dependencies : </b>
+pip install requirements.txt
