@@ -1,4 +1,4 @@
-# Python script to create
+# Python script to create the model
 import os
 from tensorflow.keras.layers import Conv2D, BatchNormalization, MaxPooling2D, Dropout, Flatten, Dense
 from tensorflow.keras.losses import categorical_crossentropy

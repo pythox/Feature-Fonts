@@ -7,7 +7,7 @@ from tensorflow.keras.layers import Conv2D, BatchNormalization, MaxPooling2D, Dr
 from tensorflow.keras.losses import categorical_crossentropy
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import Sequential
-from tensorflow import get_default_graph
+# from tensorflow import get_default_graph
 
 def create_model():
     model = Sequential()
@@ -34,16 +34,19 @@ def create_model():
     model.compile(loss=categorical_crossentropy, optimizer=Adam(), metrics=['accuracy'])
     return model
 
-graph = get_default_graph()
+# graph = get_default_graph()
 model = create_model()
 model.load_weights("./scripts/model/cp.ckpt")
 
 app = Flask(__name__)
 
+ret_val = "Upload Image"
+
 # Index route
 @app.route("/")
 def index():
-    return render_template('index.html', variable="-1")
+    global ret_val
+    return render_template('index.html', detected_font=ret_val)
 
 # Error route
 @app.route("/error")
@@ -53,15 +56,15 @@ def error():
 # Route for uploading the files
 @app.route("/upload", methods=['POST', 'GET'])
 def upload():
-    if request.method == "POST" and "input" in request.files:
-        imgstr = request.files['input'].read()
-        npimage = np.fromstring(imgstr, np.uint8)
-        image = cv2.imdecode(npimage, cv2.IMREAD_GRAYSCALE)
-        image = image.reshape(1, 28, 28, 1)
-        with graph.as_default():
-            answer = model.predict(image)
-        ans = np.array_str(np.argmax(answer, axis=1))
-    return render_template('index.html', variable=ans)
+    global ret_val
+    if request.method == "POST":
+        request.files['avatar'].save('./static/img/uploaded.jpg')
+        # image = image.reshape(1, 28, 28, 1)
+        # with graph.as_default():
+        #     answer = model.predict(image)
+        # ans = np.array_str(np.argmax(answer, axis=1))
+        ret_val = "Hello"
+        return render_template('index.html', detected_font=ret_val)
 
 # Route to remove favicon.ico error
 @app.route("/favicon.ico")
