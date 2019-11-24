@@ -77,7 +77,7 @@ def upload():
     if request.method == "POST":
         request.files['avatar'].save('./static/img/uploaded.jpg')
         ret_val = predict_input()
-        return render_template('index.html', detected_font=ret_val)
+    return render_template('index.html', detected_font=ret_val)
 
 # Route to remove favicon.ico error
 @app.route("/favicon.ico")
