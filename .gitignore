@@ -3,3 +3,4 @@ __pycache__
 venv
 scripts/syn_data
 .vscode
+scripts/syn_generate/plain
