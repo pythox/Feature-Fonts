@@ -1,46 +1,63 @@
 # Python script to load and server the model
-
 from flask import Flask, render_template, url_for, request, redirect
-import numpy as np
+import pickle
+import tensorflow as tf
 import cv2
-from tensorflow.keras.layers import Conv2D, BatchNormalization, MaxPooling2D, Dropout, Flatten, Dense
-from tensorflow.keras.losses import categorical_crossentropy
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.models import Sequential
-# from tensorflow import get_default_graph
+import numpy as np
+import slidingwindow as sw
 
-def create_model():
-    model = Sequential()
-    # Layer 1
-    model.add(Conv2D(filters=32, kernel_size=3, padding='SAME', activation='relu', input_shape=(28, 28, 1)))
-    model.add(BatchNormalization())
-    model.add(MaxPooling2D(pool_size=2))
-    model.add(Dropout(0.3))
-    # Layer 2
-    model.add(Conv2D(filters=64, kernel_size=3, padding='SAME', activation='relu'))
-    model.add(BatchNormalization())
-    model.add(MaxPooling2D(pool_size=2))
-    model.add(Dropout(0.3))
-    # Layer 3
-    model.add(Flatten())
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.3))
-    # Layer 4
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.3))
-    # Output Layer
-    model.add(Dense(10, activation='softmax'))
-    # Compile the model
-    model.compile(loss=categorical_crossentropy, optimizer=Adam(), metrics=['accuracy'])
-    return model
-
-# graph = get_default_graph()
-model = create_model()
-model.load_weights("./scripts/model/cp.ckpt")
-
+# Globals
 app = Flask(__name__)
-
 ret_val = "Upload Image"
+path = './static/img/uploaded.jpg'
+
+# Unpickle the encoder
+file = open('./scripts/conv_net/encoder.pkl', 'rb')
+encoder = pickle.load(file)
+file.close()
+
+# Load the model
+model = tf.keras.models.load_model('./scripts/conv_net/model.h5')
+
+def predict_input():
+	# Read the image
+	tx = []
+	img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+
+	# Transform it
+	(h, w) = np.shape(img)
+	if h < 256:
+	    ratio = 256 / h
+	    h = 256
+	    w = int(w * ratio)
+	else:
+	    ratio = h / 256
+	    h = 256
+	    w = int(w / ratio)
+	new_img = cv2.resize(img, (w, h))
+
+	# Generate the windows
+	windows = sw.generate(new_img, sw.DimOrder.HeightWidthChannel, 256, 0.5)
+	for j in range(0, len(windows)):
+	    tx.append(new_img[windows[j].indices()])
+	tx = np.array(tx, dtype='float32')
+	tx /= 255
+	(s, h, w) = np.shape(tx)
+	tx = np.reshape(tx, (s, h, w, 1))
+
+	# Predict labels for all windows
+	ty = model.predict(tx)
+
+	# Compute the final label from the predictions
+	final_sf = np.zeros(dtype='float32', shape=(10))
+	for ti in range(0, len(ty)):
+	    for tj in range(0, 10):
+	        final_sf[tj] += ty[ti][tj]
+	final_sf /= len(ty)
+	final_sf = final_sf.reshape((-1, 10))
+
+	# Return the final label
+	return encoder.inverse_transform(final_sf)[0][0]
 
 # Index route
 @app.route("/")
@@ -59,18 +76,13 @@ def upload():
     global ret_val
     if request.method == "POST":
         request.files['avatar'].save('./static/img/uploaded.jpg')
-        # image = image.reshape(1, 28, 28, 1)
-        # with graph.as_default():
-        #     answer = model.predict(image)
-        # ans = np.array_str(np.argmax(answer, axis=1))
-        ret_val = "Hello"
+        ret_val = predict_input()
         return render_template('index.html', detected_font=ret_val)
 
 # Route to remove favicon.ico error
 @app.route("/favicon.ico")
 def favicon():
     return "GG"
-
 
 # Set debug mode=on
 if __name__ == "__main__":
