@@ -28,7 +28,7 @@ def train_generator(batch_number_train, train_x, train_y):
             ratio = 256 / h
             h = 256
             w = int(w * ratio)
-        else:
+        elif h > 256:
             ratio = h / 256
             h = 256
             w = int(w / ratio)
@@ -55,7 +55,7 @@ def validate(model, x, y):
             ratio = 256 / h
             h = 256
             w = int(w * ratio)
-        else:
+        elif h > 256:
             ratio = h / 256
             h = 256
             w = int(w / ratio)
@@ -66,6 +66,8 @@ def validate(model, x, y):
         tx = np.array(tx, dtype='float32')
         tx /= 255
         (s, h, w) = np.shape(tx)
+        if h != 256 or w != 256:
+            print(x[i])
         tx = np.reshape(tx, (s, h, w, 1))
         ty = model.predict(tx)
         final_sf = np.zeros(dtype='float32', shape=(10))

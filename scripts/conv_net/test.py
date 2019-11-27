@@ -5,7 +5,7 @@ import numpy as np
 import slidingwindow as sw
 
 #Load the path for testing image
-path = "../syn_generate/plain/bauhas_33.jpg"
+path = "../syn_generate/plain/banshee_30.jpg"
 
 # Unpickle the encoder
 file = open('encoder.pkl', 'rb')

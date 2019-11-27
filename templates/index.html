@@ -44,7 +44,9 @@
             </label>
             <div class="progress">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>0%</div>
-            <h2 style="position:static;color: black;font-family: 'Josefin Sans', sans-serif;font-size: 1.8em;border-color: black;border-width: 2px;"> {{ detected_font }} </h2>
+            <h2 id="ressult" style="color: black;font-family: 'Josefin Sans', sans-serif;border-color: black;border-width: 2px;margin-top: 5%;">
+                <span> </span>
+            </h2>
             </div>
             <div class="alert" role="alert" style="text-align: center;"></div>
             <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
@@ -208,8 +210,9 @@
                                 return xhr;
                             },
                             
-                            success: function () {
+                            success: function (data) {
                                 $alert.show().addClass('alert-success').text('Upload success');
+                                $('#ressult').text('Similar font : ' + data);
                             },
                             
                             error: function () {
