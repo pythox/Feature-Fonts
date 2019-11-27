@@ -1,4 +1,5 @@
-# python run.py --output_dir plain/ --language en --count 500 --length 1 --format 256 --thread_count 12 --background 1 --fit
+# python run.py --output_dir plain/ --language en --count 1000 --length 1 --format 256 --thread_count 12 --background 1 --fit
+
 import argparse
 import os, errno
 import random
